@@ -11,7 +11,22 @@ export class Keyboard {
   constructor() {
     this.assignElement();
     this.addEvent();
-    this.#fnKeyArr = ["Tab", "AltLeft", "CapsLock"];
+    this.#fnKeyArr = [
+      "Tab",
+      "AltLeft",
+      "CapsLock",
+      "F1",
+      "F2",
+      "F3",
+      "F4",
+      "F6",
+      "F7",
+      "F8",
+      "F9",
+      "F10",
+      "F11",
+      "F12",
+    ];
     this.#keyActionState = [];
   }
 
@@ -27,6 +42,7 @@ export class Keyboard {
   // 이벤트 연결 함수
   addEvent() {
     document.addEventListener("contextmenu", this.#onLeftClickPrevent);
+    document.addEventListener("keydown", this.#onPreventFuncKey.bind(this));
     this.#switchEl.addEventListener("change", this.#onChangeTheme);
     this.#fontSelectEl.addEventListener("change", this.#onChangeFont);
     this.#containerEl.addEventListener("keydown", this.#onKeyDown.bind(this));
@@ -63,31 +79,35 @@ export class Keyboard {
   #resetKeyboardAction(event) {
     event.preventDefault();
     this.#keyActionState.forEach((keyEl) => {
-      keyEl.classList.remove("active");
+      keyEl.classList?.remove("active");
     });
     this.#keyActionState.splice(0, this.#keyActionState.length);
   }
   #getKeyActionState(code) {
     const keySelect = this.#keyboardEl.querySelector(`[data-code=${code}]`);
-    const result = keySelect.classList?.contains("active");
-    return [result, keySelect];
+    if (keySelect === null) {
+      return { isContain: null, keySelect };
+    }
+    const isContain = keySelect.classList?.contains("active");
+    return { isContain, keySelect };
   }
 
   // 키보드의 입력을 받는 함수
   #onKeyDown(event) {
-    this.#onPreventFuncKey(event);
-    const [result, keyEl] = this.#getKeyActionState(event.code);
+    const { isContain, keySelect } = this.#getKeyActionState(event.code);
     // active라는 클래스가 없다면 추가
-    if (!result) {
-      keyEl.classList?.add("active");
-      this.#keyActionState.push(keyEl);
+    if (isContain === null) return;
+    if (!isContain) {
+      keySelect.classList?.add("active");
+      this.#keyActionState.push(keySelect);
     }
   }
 
   #onKeyUp(event) {
-    const [result, keyEl] = this.#getKeyActionState(event.code);
-    if (result) {
-      keyEl.classList?.remove("active");
+    const { isContain, keySelect } = this.#getKeyActionState(event.code);
+    if (isContain === null) return;
+    if (isContain) {
+      keySelect.classList?.remove("active");
       this.#keyActionState.pop();
     }
   }
