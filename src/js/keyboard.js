@@ -1,12 +1,10 @@
-import "../public/img/reset.png";
 export class Keyboard {
   #switchEl;
   #fontSelectEl;
   #containerEl;
-  #resetBtnEl;
   #keyboardEl;
   #fnKeyArr;
-  #keyActionState;
+  #inputEl;
 
   constructor() {
     this.assignElement();
@@ -27,31 +25,67 @@ export class Keyboard {
       "F11",
       "F12",
     ];
-    this.#keyActionState = [];
   }
 
   // 각 요소들에 document를 할당하는 함수
   assignElement() {
     this.#containerEl = document.getElementById("container");
-    this.#resetBtnEl = this.#containerEl.querySelector(".btn-reset");
     this.#switchEl = this.#containerEl.querySelector("#switch");
     this.#fontSelectEl = this.#containerEl.querySelector("#font");
     this.#keyboardEl = this.#containerEl.querySelector("#keyboard");
+    this.#inputEl = this.#containerEl.querySelector(".input");
   }
 
   // 이벤트 연결 함수
   addEvent() {
+    // 내장 이벤트 연결
     document.addEventListener("contextmenu", this.#onLeftClickPrevent);
     document.addEventListener("keydown", this.#onPreventFuncKey.bind(this));
     this.#switchEl.addEventListener("change", this.#onChangeTheme);
     this.#fontSelectEl.addEventListener("change", this.#onChangeFont);
     this.#containerEl.addEventListener("keydown", this.#onKeyDown.bind(this));
     this.#containerEl.addEventListener("keyup", this.#onKeyUp.bind(this));
-    this.#resetBtnEl.addEventListener(
-      "click",
-      this.#resetKeyboardAction.bind(this)
+    this.#keyboardEl.addEventListener(
+      "mousedown",
+      this.#onMouseDown.bind(this)
     );
+    document.addEventListener("mouseup", this.#onMouseUp.bind(this));
+
+    // 사용자 정의 이벤트 함수
+    this.#inputEl.addEventListener("inputkey", this.#onWriteKey.bind(this));
   }
+  #onMouseDown(event) {
+    event.target.closest("div.key")?.classList.add("active");
+  }
+  #onMouseUp(event) {
+    // mousedown, mouseup이 발생했을 때 key가 동일한지 검사
+    const keyEl = event.target.closest("div.key");
+    const isActive = keyEl?.classList.contains("active");
+    const val = keyEl?.dataset.val;
+    if (isActive && !!val) {
+      this.#inputEl.dispatchEvent(
+        new CustomEvent("inputkey", {
+          detail: { keyValue: val },
+        })
+      );
+    }
+    this.#resetKeyState();
+  }
+  #onWriteKey(event) {
+    const { keyValue } = event.detail;
+    if (keyValue === "Backspace") {
+      this.#inputEl.value = this.#inputEl.value.slice(0, -1);
+    } else if (keyValue === "Space") {
+      this.#inputEl.value = this.#inputEl.value + " ";
+    } else {
+      this.#inputEl.value += keyValue;
+    }
+  }
+  #resetKeyState() {
+    const keyList = this.#keyboardEl.querySelectorAll(".active");
+    keyList.forEach((keyEl) => keyEl.classList.remove("active"));
+  }
+
   // 테마를 변경하는 버튼에 대한 이벤트
   #onChangeTheme(event) {
     document.documentElement.setAttribute(
@@ -75,16 +109,9 @@ export class Keyboard {
       }
     });
   }
-  // 키보드의 눌림 현상을 제거하는 함수
-  #resetKeyboardAction(event) {
-    event.preventDefault();
-    this.#keyActionState.forEach((keyEl) => {
-      keyEl.classList?.remove("active");
-    });
-    this.#keyActionState.splice(0, this.#keyActionState.length);
-  }
   #getKeyActionState(code) {
     const keySelect = this.#keyboardEl.querySelector(`[data-code=${code}]`);
+    // f1~f12까지의 키 입력에 대해 오류를 방지하기 위한 조건문
     if (keySelect === null) {
       return { isContain: null, keySelect };
     }
@@ -95,11 +122,10 @@ export class Keyboard {
   // 키보드의 입력을 받는 함수
   #onKeyDown(event) {
     const { isContain, keySelect } = this.#getKeyActionState(event.code);
-    // active라는 클래스가 없다면 추가
     if (isContain === null) return;
+    // active라는 클래스가 없다면 추가
     if (!isContain) {
       keySelect.classList?.add("active");
-      this.#keyActionState.push(keySelect);
     }
   }
 
@@ -108,7 +134,6 @@ export class Keyboard {
     if (isContain === null) return;
     if (isContain) {
       keySelect.classList?.remove("active");
-      this.#keyActionState.pop();
     }
   }
 }
