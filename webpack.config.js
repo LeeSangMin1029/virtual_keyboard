@@ -40,17 +40,6 @@ module.exports = {
         test: [/\.css$/],
         use: [MiniCssExtrackPlugin.loader, "css-loader"],
       },
-      {
-        test: /\.(png|jpg)$/,
-        use: [
-          {
-            loader: "file-loader",
-            options: {
-              name: "[name].[ext]",
-            },
-          },
-        ],
-      },
     ],
   },
   // html, css, js 등 여러가지 모듈의 최적화를 위한 옵션

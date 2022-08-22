@@ -172,26 +172,3 @@ input:checked + .slider::before {
   text-align: center;
   display: block;
 }
-
-.btn-reset {
-  margin-left: auto;
-  display: flex;
-}
-
-.btn-reset button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  cursor: pointer;
-  border-radius: 50%;
-}
-.btn-reset button:hover {
-  filter: invert(70%) hue-rotate(180deg);
-  transition: 0.2s;
-}
-
-.btn-reset button img {
-  width: 25px;
-  height: 25px;
-}
