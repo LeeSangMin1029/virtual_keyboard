@@ -57,8 +57,8 @@ export class Keyboard {
   #onMouseDown(event) {
     event.target.closest("div.key")?.classList.add("active");
   }
+  // key에 active 효과가 있는지 검사해서 inputkey라는 사용자 정의 함수를 호출
   #onMouseUp(event) {
-    // mousedown, mouseup이 발생했을 때 key가 동일한지 검사
     const keyEl = event.target.closest("div.key");
     const isActive = keyEl?.classList.contains("active");
     const val = keyEl?.dataset.val;
