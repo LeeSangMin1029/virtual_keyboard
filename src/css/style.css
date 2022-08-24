@@ -3,6 +3,11 @@
   outline: none;
 }
 
+:root {
+  --color: yellow;
+  --l: 15%;
+}
+
 html[theme="dark-mode"] {
   /* ! */
   filter: invert(100%) hue-rotate(180deg);
@@ -18,40 +23,82 @@ body {
 }
 
 .keyboard {
-  background-color: gray;
-  color: gray;
-  width: 1050px;
-  border-radius: 4px;
+  /* 3d */
+  --size: min(85vh, 80vw);
+  --btn-height: calc(var(--size) * 0.025);
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  font-size: calc(var(--size) * 0.0175);
+  background-color: var(--color);
+  padding: 0.2em;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: perspective(600px) rotateX(25deg) rotateZ(0deg);
+  animation: color-shift 30s infinite linear;
+  transition: 100ms ease-out;
+}
+
+.keyboard * {
+  transform-style: preserve-3d;
 }
 
 .row {
   /* ! */
   display: flex;
+  gap: 0.4em;
 }
 
 .key {
-  width: 60px;
-  height: 60px;
-  margin: 5px;
-  border-radius: 4px;
-  background-color: white;
-  cursor: pointer;
-  /* ! */
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-wrap: wrap;
-  transition: 0.2s;
-  /* ! */
+  flex-direction: column;
+  margin: 0;
+  color: var(--color);
+  font-weight: bold;
+  height: calc(var(--size) * 0.05);
+  min-width: calc(var(--size) * 0.065);
+  text-align: center;
+  padding: 0.25em;
+  background-color: hsl(240deg, 20%, calc(var(--l) + 5%));
+  position: relative;
+  transform: translateZ(var(--btn-height));
+  transition: 100ms ease-out;
+  flex-grow: 1;
+  text-shadow: 0 0 0.125em var(--color);
 }
 
-.key:hover {
-  background-color: lightgray;
+.key:after {
+  height: 100%;
+  width: var(--btn-height);
+  top: 0;
+  left: 100%;
+  background-color: hsl(240deg, 20%, calc(var(--l) + 10%));
+  transform-origin: center left;
+  transform: rotateY(90deg);
+}
+
+.key:before {
+  height: var(--btn-height);
+  width: 100%;
+  top: 100%;
+  left: 0;
+  background-color: hsl(240deg, 20%, calc(var(--l)));
+  transform-origin: top center;
+  transform: rotateX(-90deg);
+}
+
+.key:before,
+.key:after {
+  content: "";
+  position: absolute;
+  transition: 200ms ease-out;
 }
 
 .key.active {
-  background-color: #333;
-  color: #fff;
+  transform: translateZ(calc(var(--btn-height) * 0.5));
+  text-shadow: 0 0 0.25em var(--color);
 }
 
 .key .two-value {
@@ -171,4 +218,40 @@ input:checked + .slider::before {
   font-size: 30px;
   text-align: center;
   display: block;
+}
+
+@keyframes color-shift {
+  0% {
+    --color: hsl(0deg, 100%, 50%);
+  }
+  12.5% {
+    --color: hsl(45deg, 100%, 50%);
+  }
+  25% {
+    --color: hsl(90deg, 100%, 50%);
+  }
+  37.5% {
+    --color: hsl(135deg, 100%, 50%);
+  }
+  50% {
+    --color: hsl(180deg, 100%, 50%);
+  }
+  62.5% {
+    --color: hsl(225deg, 100%, 50%);
+  }
+  75% {
+    --color: hsl(270deg, 100%, 50%);
+  }
+  87.5% {
+    --color: hsl(315deg, 100%, 50%);
+  }
+  100% {
+    --color: hsl(360deg, 100%, 50%);
+  }
+}
+
+@property --color {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: yellow;
 }
