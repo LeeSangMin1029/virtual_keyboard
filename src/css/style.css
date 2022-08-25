@@ -11,7 +11,7 @@
   --btn-height: calc(var(--size) * 0.025);
   --front: 1;
   --back: 0;
-  --front-rotate: 0deg;
+  --front-rotate: 360deg;
   --back-rotate: 180deg;
 }
 
