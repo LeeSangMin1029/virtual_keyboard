@@ -16,3 +16,7 @@ npm i && npm run dev
 
 3. 3D처럼 보이는 css 적용
 - 키 입력 및 한/영 키를 눌렀을 때 약간의 애니메이션 실행
+
+## 참고
+[3D 키보드](https://codepen.io/schwiiiii/pen/BarVMxq)<br>
+[3D transform 설명](https://3dtransforms.desandro.com/box)
